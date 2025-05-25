@@ -1,4 +1,5 @@
 QUANTUM_PAINTER_ENABLE = yes
+WPM_ENABLE = yes
 
 SRC += assets/lunasit1.qgf.c
 SRC += assets/lunasit2.qgf.c
