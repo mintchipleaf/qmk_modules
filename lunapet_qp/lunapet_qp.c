@@ -22,9 +22,8 @@ bool luna_enabled = true;
 /* If false, call luna_draw() from keymap.c to render Luna manually */
 bool luna_auto_draw = true;
 
-
-static int16_t luna_x = 0;
-static int16_t luna_y = 0;
+static int luna_x = 0;
+static int luna_y = 0;
 
 static painter_device_t luna_display = NULL;
 static painter_image_handle_t lunasit1;
@@ -44,7 +43,7 @@ void luna_set_display(painter_device_t DISPLAY) {
 }
 
 /* Sets the position Luna will be rendered on the display */
-void luna_set_position(int16_t LUNA_X, int16_t LUNA_Y) {
+void luna_set_position(int LUNA_X, int LUNA_Y) {
     luna_x = LUNA_X;
     luna_y = LUNA_Y;
 }
@@ -52,19 +51,22 @@ void luna_set_position(int16_t LUNA_X, int16_t LUNA_Y) {
 /* KEYBOARD PET START */
 
 /* timers */
-uint32_t anim_timer = 0;
+static uint32_t luna_anim_timer = 0;
 
 /* current frame */
-uint8_t current_frame = 0;
+static uint8_t current_frame = 0;
 
 /* status variables */
-int current_wpm = 0;
-led_t led_usb_state;
+static int current_wpm = 0;
+static led_t led_usb_state;
 
-bool isSneaking = false;
-bool isJumping = false;
-bool showedJump = true;
+static bool isSneaking = false;
+static bool isJumping = false;
+static bool showedJump = true;
 
+bool is_luna_timer_elapsed(void) {
+    return timer_elapsed32(luna_anim_timer) > LUNA_FRAME_DURATION;
+}
 
 /* Draws Luna on screen at the defined coordinates */
 void luna_draw(void) {
@@ -73,10 +75,11 @@ void luna_draw(void) {
     }
 
     /* animation timer */
-    if(timer_elapsed32(anim_timer) <= LUNA_FRAME_DURATION) {
+    if(!is_luna_timer_elapsed()) {
         return;
     }
-    anim_timer = timer_read32();
+    luna_anim_timer = timer_read32();
+
 
     int currentY = luna_y;
 
@@ -104,13 +107,13 @@ void luna_draw(void) {
         } else {
             qp_drawimage(luna_display, luna_x, currentY, lunasneak2);
         }
-    } else if(current_wpm <= LUNA_MIN_WALK_SPEED) {
+    } else if(current_wpm <= LUNA_MIN_WALK_WPM) {
         if(current_frame == 1) {
             qp_drawimage(luna_display, luna_x, currentY, lunasit1);
         } else {
             qp_drawimage(luna_display, luna_x, currentY, lunasit2);
         }
-    } else if(current_wpm <= LUNA_MIN_RUN_SPEED) {
+    } else if(current_wpm <= LUNA_MIN_RUN_WPM) {
         if(current_frame == 1) {
             qp_drawimage(luna_display, luna_x, currentY, lunawalk1);
         } else {
@@ -150,7 +153,6 @@ void keyboard_post_init_lunapet_qp_user(void) {
     lunasneak2 = qp_load_image_mem(gfx_lunasneak2);
     lunabark1 = qp_load_image_mem(gfx_lunabark1);
     lunabark2 = qp_load_image_mem(gfx_lunabark2);
-
 }
 
 void post_process_record_lunapet_qp_user(uint16_t KEYCODE, keyrecord_t *RECORD) {
@@ -171,10 +173,5 @@ void post_process_record_lunapet_qp_user(uint16_t KEYCODE, keyrecord_t *RECORD) 
                 isJumping = false;
             }
             break;
-
-        if(get_mods() & MOD_MASK_CTRL)
-        {
-            isSneaking = true;
-        }
     }
 }

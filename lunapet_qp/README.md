@@ -1,10 +1,11 @@
 # Luna Keyboard Pet in Quantum Painter
 
-This adds @HellSingCoder's Luna keyboard pet through Quantum Painter as a community module. This works for both the `oled driver` feature and for `quantum painter`.
+This adds @HellSingCoder's Luna keyboard pet through Quantum Painter as a community module. Currently only works with `quantum painter`, but intended to eventually add option to use `oled_driver` feature for greater compatibility.
 
 This is currently a work in progress.
 
-It can be integrated into your keymap by adding the following to your `keymap.json`:
+## Use
+Add the following to your `keymap.json`:
 
 ```json
 {
@@ -12,4 +13,27 @@ It can be integrated into your keymap by adding the following to your `keymap.js
 }
 ```
 
-Quantum Painter support requires initializing your own `painter_device_t` and passing it `to luna_set_display()` in your `keymap.c` file. (See [QMK Quantum Painter Drivers](https://docs.qmk.fm/quantum_painter#quantum-painter-drivers))
+Initialize a `painter_device_t` for your display device (See [QMK Quantum Painter Drivers](https://docs.qmk.fm/quantum_painter#quantum-painter-drivers)), and call
+```c
+void luna_set_display(painter_device_t luna_display);
+```
+once in your `keymap.c` file's initialization functions. (ex. `keyboard_post_init_user()`).
+
+## Configuration
+
+| Setting                             | Default | Description                                                                             |
+| ----------------------------------- | ------- | --------------------------------------------------------------------------------------- |
+| `LUNA_MIN_WALK_WPM`                 | `10`    | WPM required to trigger 'walk' animation. WPM under this will trigger 'sit' animation.  |
+| `LUNA_MIN_RUN_WPM`                  | `40`    | WPM required to trigger 'run' animation.                                                |
+| `LUNA_FRAME_DURATION`               | `200`   | How long each animation frame lasts in ms.                                              |
+
+## API
+
+| Setting                             | Type   | Default | Description                                                                                                               |
+| ----------------------------------- | -------| ------- | ------------------------------------------------------------------------------------------------------------------------- |
+| `luna_set_display(painter_device_t)`| `void` | `NULL`  | [**REQUIRED**] Quantum Painter device to draw Luna on.                                                                    |
+| `luna_set_position(int, int)`       | `void` | `0, 0`  | Position on the QP device where Luna will be drawn (the frame's top left pixel.)                                          |
+| `luna_draw(void)`                   | `void` |         | Performs the Luna rendering manually. (For use in `keyboard.c`, see `luna_auto_draw`)                                     |
+| `luna_timer_elapsed(void)`          | `bool` |         | Returns `true` if Luna's frame timer is greater than `LUNA_FRAME_DURATION`. (Useful when manually calling `luna_draw()`.) |
+| `luna_enabled`                      | `bool` | `true`  | Whether Luna should be rendered currently. (Separate from `` to allow luna on/off manually during operation.)             |
+| `luna_auto_draw`                    | `bool` | `true`  | Whether Luna rendering should be handled by this module. (If false, call `luna_draw()` from `keyboard.c` manually.)       |
