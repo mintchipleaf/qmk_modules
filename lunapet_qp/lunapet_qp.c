@@ -69,6 +69,7 @@ bool is_luna_timer_elapsed(void) {
 }
 
 /* Draws Luna on screen at the defined coordinates */
+int current_y;
 void luna_draw(bool FLUSH) {
     if(!luna_enabled || luna_display == NULL) {
         return;
@@ -80,50 +81,59 @@ void luna_draw(bool FLUSH) {
     }
     luna_anim_timer = timer_read32();
 
-
-    int currentY = luna_y;
-
     /* switch frame */
     current_frame = (current_frame + 1) % 2;
 
+
     /* jump */
-    if (isJumping || !showedJump) {
-        currentY = luna_y - LUNA_JUMP_HEIGHT;
+    if (isJumping && !showedJump) {
+        current_y = luna_y - LUNA_JUMP_HEIGHT;
         showedJump = true;
-    } else {
-        currentY = luna_y;
+
+        /* clear */
+        qp_rect(luna_display, luna_x, (current_y + lunasit1->height), (luna_x + lunasit1->width), (current_y + lunasit1->height + LUNA_JUMP_HEIGHT), 0, 0, 0, true);
+    } else if (!showedJump) {
+        /* clear */
+        qp_rect(luna_display, luna_x, current_y, (luna_x + lunasit1->width), current_y + LUNA_JUMP_HEIGHT, 0, 0, 0, true);
+
+        current_y = luna_y;
+        showedJump = true;
+    }
+
+    if(showedJump && !isJumping) {
+        current_y = luna_y;
     }
 
     /* current status */
     if(led_usb_state.caps_lock) {
         if(current_frame == 1) {
-            qp_drawimage(luna_display, luna_x, currentY, lunabark1);
+            qp_drawimage(luna_display, luna_x, current_y, lunabark1);
         } else {
-            qp_drawimage(luna_display, luna_x, currentY, lunabark2);
+            qp_drawimage(luna_display, luna_x, current_y, lunabark2);
         }
     } else if(isSneaking) {
         if(current_frame == 1) {
-            qp_drawimage(luna_display, luna_x, currentY, lunasneak1);
+            qp_drawimage(luna_display, luna_x, current_y, lunasneak1);
         } else {
-            qp_drawimage(luna_display, luna_x, currentY, lunasneak2);
+            qp_drawimage(luna_display, luna_x, current_y, lunasneak2);
         }
     } else if(current_wpm <= LUNA_MIN_WALK_WPM) {
         if(current_frame == 1) {
-            qp_drawimage(luna_display, luna_x, currentY, lunasit1);
+            qp_drawimage(luna_display, luna_x, current_y, lunasit1);
         } else {
-            qp_drawimage(luna_display, luna_x, currentY, lunasit2);
+            qp_drawimage(luna_display, luna_x, current_y, lunasit2);
         }
     } else if(current_wpm <= LUNA_MIN_RUN_WPM) {
         if(current_frame == 1) {
-            qp_drawimage(luna_display, luna_x, currentY, lunawalk1);
+            qp_drawimage(luna_display, luna_x, current_y, lunawalk1);
         } else {
-            qp_drawimage(luna_display, luna_x, currentY, lunawalk2);
+            qp_drawimage(luna_display, luna_x, current_y, lunawalk2);
         }
     } else {
         if(current_frame == 1) {
-            qp_drawimage(luna_display, luna_x, currentY, lunarun1);
+            qp_drawimage(luna_display, luna_x, current_y, lunarun1);
         } else {
-            qp_drawimage(luna_display, luna_x, currentY, lunarun2);
+            qp_drawimage(luna_display, luna_x, current_y, lunarun2);
         }
     }
 
@@ -173,6 +183,10 @@ void post_process_record_lunapet_qp_user(uint16_t KEYCODE, keyrecord_t *RECORD) 
                 showedJump = false;
             } else {
                 isJumping = false;
+<<<<<<< Updated upstream
+=======
+                showedJump = false;
+>>>>>>> Stashed changes
             }
             break;
     }
