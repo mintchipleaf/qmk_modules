@@ -183,10 +183,7 @@ void post_process_record_lunapet_qp_user(uint16_t KEYCODE, keyrecord_t *RECORD) 
                 showedJump = false;
             } else {
                 isJumping = false;
-<<<<<<< Updated upstream
-=======
                 showedJump = false;
->>>>>>> Stashed changes
             }
             break;
     }
