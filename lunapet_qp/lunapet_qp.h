@@ -23,6 +23,10 @@
 #   define LUNA_JUMP_HEIGHT 8 // how many pixels the luna sprite will move up when 'jumping'
 #endif //LUNA_JUMP_HEIGHT
 
+#ifndef QUANTUM_PAINTER_NUM_IMAGES
+#    define QUANTUM_PAINTER_NUM_IMAGES 10 // make sure we can at least load all 10 frames
+#endif //QUANTUM_PAINTER_NUM_IMAGES
+
 bool luna_enabled;
 bool luna_auto_draw;
 
