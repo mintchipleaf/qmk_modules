@@ -19,6 +19,10 @@
 #   define LUNA_FRAME_DURATION 200 // how long each frame lasts in ms
 #endif //LUNA_FRAME_DURATION
 
+#ifndef LUNA_JUMP_HEIGHT
+#   define LUNA_JUMP_HEIGHT 8 // how many pixels the luna sprite will move up when 'jumping'
+#endif //LUNA_JUMP_HEIGHT
+
 bool luna_enabled;
 bool luna_auto_draw;
 
@@ -26,6 +30,6 @@ void luna_set_display(painter_device_t);
 
 void luna_set_position(int, int);
 
-void luna_draw(void);
+void luna_draw(bool);
 
 bool is_luna_timer_elapsed(void);

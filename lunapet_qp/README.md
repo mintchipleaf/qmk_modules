@@ -26,14 +26,15 @@ once in your `keymap.c` file's initialization functions. (ex. `keyboard_post_ini
 | `LUNA_MIN_WALK_WPM`                 | `10`    | WPM required to trigger 'walk' animation. WPM under this will trigger 'sit' animation.  |
 | `LUNA_MIN_RUN_WPM`                  | `40`    | WPM required to trigger 'run' animation.                                                |
 | `LUNA_FRAME_DURATION`               | `200`   | How long each animation frame lasts in ms.                                              |
+| `LUNA_JUMP_HEIGHT`                  | `1`     | How many pixels the luna sprite will move up when 'jumping'.                            |
 
 ## API
 
-| Setting                             | Type   | Default | Description                                                                                                               |
-| ----------------------------------- | -------| ------- | ------------------------------------------------------------------------------------------------------------------------- |
-| `luna_set_display(painter_device_t)`| `void` | `NULL`  | [**REQUIRED**] Quantum Painter device to draw Luna on.                                                                    |
-| `luna_set_position(int, int)`       | `void` | `0, 0`  | Position on the QP device where Luna will be drawn (the frame's top left pixel.)                                          |
-| `luna_draw(void)`                   | `void` |         | Performs the Luna rendering manually. (For use in `keyboard.c`, see `luna_auto_draw`)                                     |
-| `luna_timer_elapsed(void)`          | `bool` |         | Returns `true` if Luna's frame timer is greater than `LUNA_FRAME_DURATION`. (Useful when manually calling `luna_draw()`.) |
-| `luna_enabled`                      | `bool` | `true`  | Whether Luna should be rendered currently. (Separate from `` to allow luna on/off manually during operation.)             |
-| `luna_auto_draw`                    | `bool` | `true`  | Whether Luna rendering should be handled by this module. (If false, call `luna_draw()` from `keyboard.c` manually.)       |
+| Setting                             | Type   | Default | Description                                                                                                                       |
+| ----------------------------------- | -------| ------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| `luna_set_display(painter_device_t)`| `void` | `NULL`  | [**REQUIRED**] Quantum Painter device to draw Luna on.                                                                            |
+| `luna_set_position(int, int)`       | `void` | `0, 0`  | Position on the QP device where Luna will be drawn (the frame's top left pixel.)                                                  |
+| `luna_draw(bool)`                   | `void` |         | Performs the Luna rendering manually, and whether it should perform a 'qp_flush'. (For use in `keyboard.c`, see `luna_auto_draw`) |
+| `luna_timer_elapsed(void)`          | `bool` |         | Returns `true` if Luna's frame timer is greater than `LUNA_FRAME_DURATION`. (Useful when manually calling `luna_draw()`.)         |
+| `luna_enabled`                      | `bool` | `true`  | Whether Luna should be rendered currently. (Separate from `` to allow luna on/off manually during operation.)                     |
+| `luna_auto_draw`                    | `bool` | `true`  | Whether Luna rendering should be handled by this module. (If false, call `luna_draw()` from `keyboard.c` manually.)               |

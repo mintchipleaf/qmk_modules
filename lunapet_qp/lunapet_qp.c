@@ -69,7 +69,7 @@ bool is_luna_timer_elapsed(void) {
 }
 
 /* Draws Luna on screen at the defined coordinates */
-void luna_draw(void) {
+void luna_draw(bool FLUSH) {
     if(!luna_enabled || luna_display == NULL) {
         return;
     }
@@ -88,7 +88,7 @@ void luna_draw(void) {
 
     /* jump */
     if (isJumping || !showedJump) {
-        currentY = luna_y -1;
+        currentY = luna_y - LUNA_JUMP_HEIGHT;
         showedJump = true;
     } else {
         currentY = luna_y;
@@ -127,14 +127,16 @@ void luna_draw(void) {
         }
     }
 
-    qp_flush(luna_display);
+    if(FLUSH) {
+        qp_flush(luna_display);
+    }
 }
 
 
 /* Draw Luna as housekeeping task */
 void housekeeping_task_lunapet_qp_user(void) {
     if(luna_auto_draw) {
-        luna_draw();
+        luna_draw(true);
     }
 
     current_wpm = get_current_wpm();
