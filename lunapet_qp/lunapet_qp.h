@@ -34,6 +34,6 @@ void luna_set_display(painter_device_t);
 
 void luna_set_position(int, int);
 
-void luna_draw(bool);
+void luna_draw(bool, bool);
 
 bool is_luna_timer_elapsed(void);
