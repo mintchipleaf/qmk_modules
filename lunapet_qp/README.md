@@ -32,9 +32,9 @@ once in your `keymap.c` file's initialization functions. (ex. `keyboard_post_ini
 
 | Setting                             | Type   | Default | Description                                                                                                                       |
 | ----------------------------------- | -------| ------- | --------------------------------------------------------------------------------------------------------------------------------- |
-| `luna_set_display(painter_device_t)`| `void` | `NULL`  | [**REQUIRED**] Quantum Painter device to draw Luna on.                                                                            |
-| `luna_set_position(int, int)`       | `void` | `0, 0`  | Position on the QP device where Luna will be drawn (the frame's top left pixel.)                                                  |
-| `luna_draw(bool)`                   | `void` |         | Performs the Luna rendering manually, and whether it should perform a 'qp_flush'. (For use in `keyboard.c`, see `luna_auto_draw`) |
-| `luna_timer_elapsed(void)`          | `bool` |         | Returns `true` if Luna's frame timer is greater than `LUNA_FRAME_DURATION`. (Useful when manually calling `luna_draw()`.)         |
-| `luna_enabled`                      | `bool` | `true`  | Whether Luna should be rendered currently. (Separate from `` to allow luna on/off manually during operation.)                     |
+| `luna_set_display(painter_device_t device)`| `void` | `NULL`  | [**REQUIRED**] Quantum Painter device to draw Luna on.                                                                            |
+| `luna_set_position(int x,int y)`           | `void` | `0, 0`  | Position on the QP device where Luna will be drawn (the frame's top left pixel.)                                                  |
+| `luna_draw(bool flush, bool jump_cleanup)`                    | `void` |         | Performs the Luna rendering manually.<br>`flush`: whether it should perform a 'qp_flush'. (For use in `keyboard.c`, see `luna_auto_draw`)<br>`jump_cleanup`: Whether to blank out the sprite lines left rendered from prev frame if a jump was started/ended. |
+| `luna_timer_elapsed(void)`          | `bool` |         | Returns `true` if Luna's frame timer is greater than `LUNA_FRAME_DURATION`. (Useful when manually calling `luna_draw()`)         |
+| `luna_enabled`                      | `bool` | `true`  | Whether Luna should be rendered currently. |
 | `luna_auto_draw`                    | `bool` | `true`  | Whether Luna rendering should be handled by this module. (If false, call `luna_draw()` from `keyboard.c` manually.)               |

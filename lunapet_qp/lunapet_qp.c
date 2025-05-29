@@ -60,9 +60,9 @@ static uint8_t current_frame = 0;
 static int current_wpm = 0;
 static led_t led_usb_state;
 
-static bool isSneaking = false;
-static bool isJumping = false;
-static bool showedJump = true;
+static bool is_sneaking = false;
+static bool is_jumping = false;
+static bool jump_dirty = false;
 
 bool is_luna_timer_elapsed(void) {
     return timer_elapsed32(luna_anim_timer) > LUNA_FRAME_DURATION;
@@ -70,37 +70,43 @@ bool is_luna_timer_elapsed(void) {
 
 /* Draws Luna on screen at the defined coordinates */
 int current_y;
-void luna_draw(bool FLUSH) {
+void luna_draw(bool FLUSH, bool JUMP_CLEANUP) {
     if(!luna_enabled || luna_display == NULL) {
         return;
     }
 
-    /* animation timer */
-    if(!is_luna_timer_elapsed()) {
+    /* check frame timer */
+    if(is_luna_timer_elapsed()) {
+        /* switch frame */
+        current_frame = (current_frame + 1) % 2;
+
+        /* reset frame timer */
+        luna_anim_timer = timer_read32();
+    } else if (!jump_dirty) {
         return;
     }
-    luna_anim_timer = timer_read32();
 
-    /* switch frame */
-    current_frame = (current_frame + 1) % 2;
+    if(jump_dirty) {
+        if(is_jumping) {
+            /* perform jump */
+            current_y = luna_y - LUNA_JUMP_HEIGHT;
 
+            if (JUMP_CLEANUP) {
+                /* clear */
+                qp_rect(luna_display, luna_x, (current_y + lunasit1->height), (luna_x + lunasit1->width), (current_y + lunasit1->height + LUNA_JUMP_HEIGHT), 0, 0, 0, true);
+            }
+        } else {
+            /* perform landing */
+            if (JUMP_CLEANUP) {
+                /* clear */
+                qp_rect(luna_display, luna_x, current_y, (luna_x + lunasit1->width), current_y + LUNA_JUMP_HEIGHT, 0, 0, 0, true);
+            }
+        }
 
-    /* jump */
-    if (isJumping && !showedJump) {
-        current_y = luna_y - LUNA_JUMP_HEIGHT;
-        showedJump = true;
-
-        /* clear */
-        qp_rect(luna_display, luna_x, (current_y + lunasit1->height), (luna_x + lunasit1->width), (current_y + lunasit1->height + LUNA_JUMP_HEIGHT), 0, 0, 0, true);
-    } else if (!showedJump) {
-        /* clear */
-        qp_rect(luna_display, luna_x, current_y, (luna_x + lunasit1->width), current_y + LUNA_JUMP_HEIGHT, 0, 0, 0, true);
-
-        current_y = luna_y;
-        showedJump = true;
+        jump_dirty = false;
     }
 
-    if(showedJump && !isJumping) {
+    if(!is_jumping) {
         current_y = luna_y;
     }
 
@@ -111,7 +117,7 @@ void luna_draw(bool FLUSH) {
         } else {
             qp_drawimage(luna_display, luna_x, current_y, lunabark2);
         }
-    } else if(isSneaking) {
+    } else if(is_sneaking) {
         if(current_frame == 1) {
             qp_drawimage(luna_display, luna_x, current_y, lunasneak1);
         } else {
@@ -142,19 +148,20 @@ void luna_draw(bool FLUSH) {
     }
 }
 
+/*==QMK API==*/
 
 /* Draw Luna as housekeeping task */
-void housekeeping_task_lunapet_qp_user(void) {
-    if(luna_auto_draw) {
-        luna_draw(true);
-    }
-
+void housekeeping_task_lunapet_qp(void) {
     current_wpm = get_current_wpm();
     led_usb_state = host_keyboard_led_state();
+
+    if(luna_auto_draw) {
+        luna_draw(true, true);
+    }
 }
 
 /* Load assets */
-void keyboard_post_init_lunapet_qp_user(void) {
+void keyboard_post_init_lunapet_qp(void) {
     lunasit1 = qp_load_image_mem(gfx_lunasit1);
     lunasit2 = qp_load_image_mem(gfx_lunasit2);
     lunawalk1 = qp_load_image_mem(gfx_lunawalk1);
@@ -167,23 +174,24 @@ void keyboard_post_init_lunapet_qp_user(void) {
     lunabark2 = qp_load_image_mem(gfx_lunabark2);
 }
 
-void post_process_record_lunapet_qp_user(uint16_t KEYCODE, keyrecord_t *RECORD) {
+/* Monitor key-based animation state changes */
+void post_process_record_lunapet_qp(uint16_t KEYCODE, keyrecord_t *RECORD) {
     switch (KEYCODE) {
         case KC_LCTL:
         case KC_RCTL:
             if (RECORD->event.pressed) {
-                isSneaking = true;
+                is_sneaking = true;
             } else {
-                isSneaking = false;
+                is_sneaking = false;
             }
             break;
         case KC_SPC:
             if (RECORD->event.pressed) {
-                isJumping = true;
-                showedJump = false;
+                is_jumping = true;
+                jump_dirty = true;
             } else {
-                isJumping = false;
-                showedJump = false;
+                is_jumping = false;
+                jump_dirty = true;
             }
             break;
     }
