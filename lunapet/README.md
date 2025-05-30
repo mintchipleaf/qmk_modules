@@ -1,4 +1,4 @@
-# Luna Keyboard Pet in Quantum Painter
+# Luna Keyboard Pet
 
 This adds @HellSingCoder's Luna keyboard pet through Quantum Painter as a community module. Currently only works with `quantum painter`, but intended to eventually add option to use `oled_driver` feature for greater compatibility.
 
@@ -9,7 +9,7 @@ Add the following to your `keymap.json`:
 
 ```json
 {
-    "modules": ["mintchipleaf/lunapet_qp"]
+    "modules": ["mintchipleaf/lunapet"]
 }
 ```
 
