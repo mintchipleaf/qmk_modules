@@ -12,4 +12,4 @@ Each child directory is a separate module, and has instructions on how to add it
 
 | Module | Description |
 | ----------------------- | ----------- |
-| [Luna Keyboard Pet (QP)](./lunapet_qp) | Adds the adorable [Luna keyboard pet](https://github.com/HellSingCoder/qmk_firmware/tree/33d7fa1180d232dcdb024c68a8f4629dced32afb/keyboards/sofle/keymaps/helltm) using Quantum Painter |
+| [Luna Keyboard Pet](./lunapet) | Adds the adorable [Luna keyboard pet](https://github.com/HellSingCoder/qmk_firmware/tree/33d7fa1180d232dcdb024c68a8f4629dced32afb/keyboards/sofle/keymaps/helltm) using Quantum Painter |

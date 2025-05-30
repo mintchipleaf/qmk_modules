@@ -2,7 +2,7 @@
 #include <qp.h>
 #include <stdint.h>
 #include "assets/lunasit1.qgf.h"
-#include "lunapet_qp.h"
+#include "lunapet.h"
 #include "assets/lunasit2.qgf.h"
 #include "assets/lunawalk1.qgf.h"
 #include "assets/lunawalk2.qgf.h"
@@ -151,7 +151,7 @@ void luna_draw(bool FLUSH, bool JUMP_CLEANUP) {
 /*==QMK API==*/
 
 /* Draw Luna as housekeeping task */
-void housekeeping_task_lunapet_qp(void) {
+void housekeeping_task_lunapet(void) {
     current_wpm = get_current_wpm();
     led_usb_state = host_keyboard_led_state();
 
@@ -161,7 +161,7 @@ void housekeeping_task_lunapet_qp(void) {
 }
 
 /* Load assets */
-void keyboard_post_init_lunapet_qp(void) {
+void keyboard_post_init_lunapet(void) {
     lunasit1 = qp_load_image_mem(gfx_lunasit1);
     lunasit2 = qp_load_image_mem(gfx_lunasit2);
     lunawalk1 = qp_load_image_mem(gfx_lunawalk1);
@@ -175,7 +175,7 @@ void keyboard_post_init_lunapet_qp(void) {
 }
 
 /* Monitor key-based animation state changes */
-void post_process_record_lunapet_qp(uint16_t KEYCODE, keyrecord_t *RECORD) {
+void post_process_record_lunapet(uint16_t KEYCODE, keyrecord_t *RECORD) {
     switch (KEYCODE) {
         case KC_LCTL:
         case KC_RCTL:
