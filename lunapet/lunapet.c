@@ -172,6 +172,10 @@ void keyboard_post_init_lunapet(void) {
     lunasneak2 = qp_load_image_mem(gfx_lunasneak2);
     lunabark1 = qp_load_image_mem(gfx_lunabark1);
     lunabark2 = qp_load_image_mem(gfx_lunabark2);
+
+#ifdef LUNA_START_DISABLED
+    luna_enabled = false;
+#endif //LUNA_START_DISABLED
 }
 
 /* Monitor key-based animation state changes */
@@ -179,20 +183,18 @@ void post_process_record_lunapet(uint16_t KEYCODE, keyrecord_t *RECORD) {
     switch (KEYCODE) {
         case KC_LCTL:
         case KC_RCTL:
-            if (RECORD->event.pressed) {
-                is_sneaking = true;
-            } else {
-                is_sneaking = false;
-            }
+                is_sneaking = RECORD->event.pressed;
             break;
         case KC_SPC:
+                is_jumping = RECORD->event.pressed;
+                jump_dirty = true;
+            break;
+        case LUNA:
             if (RECORD->event.pressed) {
-                is_jumping = true;
-                jump_dirty = true;
-            } else {
-                is_jumping = false;
-                jump_dirty = true;
+                luna_enabled = !luna_enabled;
             }
+            break;
+        default:
             break;
     }
 }

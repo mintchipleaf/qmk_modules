@@ -1,4 +1,10 @@
 {
     "module_name": "Luna Keyboard Pet",
-    "maintainer": "mintchipleaf"
+    "maintainer": "mintchipleaf",
+    "features": {
+        "deferred_exec": true
+    },
+    "keycodes": [
+        {"key": "LUNA"}
+    ]
 }
